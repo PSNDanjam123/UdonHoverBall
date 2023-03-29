@@ -80,7 +80,7 @@ public class PlayerSettings : UdonSharpBehaviour
 
     public override void InputUse(bool value, UdonInputEventArgs args)
     {
-        if (!value || Fuel < 0.2 || _playerApi.IsPlayerGrounded() || _usingFuel)
+        if (Fuel < 0.2 || _playerApi.IsPlayerGrounded())
         {
             _usingFuel = false;
             return;
