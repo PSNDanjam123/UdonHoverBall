@@ -15,25 +15,9 @@ public class PlayerSettings : UdonSharpBehaviour
     [SerializeField] private float _runSpeed = 4.0f;
     [SerializeField] private float _jumpImpulse = 3.0f;
     [SerializeField] private float _strafeSpeed = 2.0f;
-    [SerializeField] private float _boostStrength = 0.1f;
-    [SerializeField] private float _maxFuel = 10.0f;
-    [SerializeField] GameObject _fuelDisplay;
-    [SerializeField] Text _fuelDisplayText;
-    private float _fuel = 10.0f;
-    private bool _usingFuel = false;
 
     private bool _canDoubleJump = false;
     private bool _doubleJumped = false;
-
-    public float Fuel
-    {
-        set
-        {
-            _fuel = value;
-            _fuelDisplayText.text = value.ToString("F1");
-        }
-        get => _fuel;
-    }
 
     void Start()
     {
@@ -42,7 +26,6 @@ public class PlayerSettings : UdonSharpBehaviour
         _playerApi.SetRunSpeed(_runSpeed);
         _playerApi.SetJumpImpulse(_jumpImpulse);
         _playerApi.SetStrafeSpeed(_strafeSpeed);
-        Fuel = _maxFuel;
     }
 
     void Update()
@@ -52,9 +35,6 @@ public class PlayerSettings : UdonSharpBehaviour
         var forward = rot * Vector3.forward;
         var right = rot * Vector3.right;
         var up = rot * Vector3.up;
-        _fuelDisplay.transform.position = head.position + (forward * 0.2f) + (right * 0.05f) + (up * -0.05f);
-        var lookAt = _fuelDisplay.transform.position - head.position;
-        _fuelDisplay.transform.LookAt(head.position + lookAt.normalized);
     }
 
     void FixedUpdate()
@@ -63,29 +43,7 @@ public class PlayerSettings : UdonSharpBehaviour
         {
             _canDoubleJump = false;
             _doubleJumped = false;
-            if (Fuel < _maxFuel)
-            {
-                Fuel += 0.01f;
-            }
-            _usingFuel = false;
         }
-        if (_usingFuel && Fuel > 0)
-        {
-            var vector = _playerApi.GetVelocity();
-            vector += Vector3.up * _boostStrength;
-            Fuel -= 0.02f;
-            _playerApi.SetVelocity(vector);
-        }
-    }
-
-    public override void InputUse(bool value, UdonInputEventArgs args)
-    {
-        if (!value || Fuel < 0.2 || _playerApi.IsPlayerGrounded() || _usingFuel)
-        {
-            _usingFuel = false;
-            return;
-        }
-        _usingFuel = true;
     }
 
     public override void InputJump(bool value, UdonInputEventArgs args)

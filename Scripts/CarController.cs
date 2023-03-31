@@ -36,9 +36,15 @@ public class CarController : UdonSharpBehaviour
     [SerializeField] float m_brakeTorque = 100f;
     [SerializeField] float m_maxSteeringAngle = 70f;
 
-    [SerializeField, UdonSynced] string owner;
+    [SerializeField, UdonSynced] string m_owner;
 
     VRCPlayerApi playerApi;
+
+    public string Owner
+    {
+        private set => m_owner = value;
+        get => m_owner;
+    }
 
     float RocketBoost
     {
@@ -109,7 +115,7 @@ public class CarController : UdonSharpBehaviour
     public override void Interact()
     {
         SetOwner();
-        owner = Networking.LocalPlayer.displayName;
+        m_owner = Networking.LocalPlayer.displayName;
         m_cameraController.SetCar(gameObject.transform);
         m_cameraController.Enable();
         RequestSerialization();
@@ -129,7 +135,7 @@ public class CarController : UdonSharpBehaviour
         {
             return; // not them
         }
-        owner = null;
+        m_owner = null;
         m_cameraController.Disable();
         m_cameraController.UnsetCar();
     }
@@ -144,7 +150,7 @@ public class CarController : UdonSharpBehaviour
         {
             return;
         }
-        owner = null;
+        m_owner = null;
         RequestSerialization();
     }
 
@@ -349,7 +355,7 @@ public class CarController : UdonSharpBehaviour
         {
             playerApi = Networking.LocalPlayer;
         }
-        return owner == playerApi.displayName;
+        return m_owner == playerApi.displayName;
     }
 
     void SetOwner()

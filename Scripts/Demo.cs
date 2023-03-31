@@ -18,11 +18,25 @@ public class Demo : UdonSharpBehaviour
         _rigidBody = GetComponent<Rigidbody>();
 
     }
-    public override void Interact()
+
+    void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("Initial hit!");
+        if (collision.gameObject == null)
+        {
+            return; // protected
+        }
+        var carController = collision.gameObject.GetComponentInParent<CarController>();
+        if (carController == null)
+        {
+            return;
+        }
+        if (carController.Owner != Networking.LocalPlayer.displayName)
+        {
+            return;
+        }
+        Debug.Log("Hit!");
         SetOwner();
-        var vector = _rigidBody.position - _player.GetPosition();
-        _rigidBody.velocity = vector * _hitStrength;
     }
 
     void SetOwner(VRCPlayerApi playerApi = null)
