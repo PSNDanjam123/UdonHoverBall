@@ -118,6 +118,7 @@ public class CarController : UdonSharpBehaviour
         m_owner = Networking.LocalPlayer.displayName;
         m_cameraController.SetCar(gameObject.transform);
         m_cameraController.Enable();
+        Networking.LocalPlayer.TeleportTo(Vector3.up * 1000f, Quaternion.identity);
         RequestSerialization();
     }
 
@@ -179,21 +180,15 @@ public class CarController : UdonSharpBehaviour
 
         var throttle = 0.0f;
 
-        if (!value)
+        if (args.handType == HandType.RIGHT)
         {
-            Throttle = throttle;
-            return;
-        }
-        else if (args.handType == HandType.RIGHT)
-        {
-
             // forward
-            throttle = args.floatValue;
+            throttle = 1.0f;
         }
-        else if (args.handType == HandType.LEFT)
+        else
         {
             // reverse
-            throttle = -args.floatValue;
+            throttle = -1.0f;
         }
         Throttle = throttle;
     }
@@ -207,6 +202,19 @@ public class CarController : UdonSharpBehaviour
         Steering = value;
     }
 
+    public override void InputLookHorizontal(float value, UdonInputEventArgs args)
+    {
+        var multiplier = 5.0f;
+        m_rigidBody.AddTorque(Vector3.up * value * multiplier, ForceMode.Acceleration);
+    }
+
+    public override void InputLookVertical(float value, UdonInputEventArgs args)
+    {
+        var multiplier = 5.0f;
+        var right = Vector3.Cross(m_rigidBody.transform.forward, Vector3.up);
+        m_rigidBody.AddTorque(Vector3.right * value * multiplier, ForceMode.Acceleration);
+    }
+
     public override void InputGrab(bool value, UdonInputEventArgs args)
     {
         if (!ControlsCar())
@@ -217,7 +225,6 @@ public class CarController : UdonSharpBehaviour
         {
             return;
         }
-
         var rocketBoost = 0.0f;
         var val = 0.0f;
         if (value)
@@ -225,6 +232,7 @@ public class CarController : UdonSharpBehaviour
             val = 1.0f;
         }
         rocketBoost = val;
+        RocketBoost = rocketBoost;
     }
 
     private void applyRocketBoost()
