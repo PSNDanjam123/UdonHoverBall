@@ -21,7 +21,6 @@ public class Demo : UdonSharpBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Initial hit!");
         if (collision.gameObject == null)
         {
             return; // protected
@@ -35,7 +34,6 @@ public class Demo : UdonSharpBehaviour
         {
             return;
         }
-        Debug.Log("Hit!");
         SetOwner();
     }
 
