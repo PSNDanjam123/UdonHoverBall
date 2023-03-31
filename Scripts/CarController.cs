@@ -3,7 +3,9 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class CarController : UdonSharpBehaviour
 {
     Rigidbody m_rigidBody;
@@ -21,40 +23,235 @@ public class CarController : UdonSharpBehaviour
     [SerializeField] GameObject m_wheelBR;
     [SerializeField] GameObject m_wheelBL;
 
+    [SerializeField] float m_steering = 0.0f;
+    [SerializeField] float m_throttle = 0.0f;
+    [SerializeField] float m_brake = 0.0f;
+    [SerializeField] float m_jumpAmount = 1000f;
+    [SerializeField] float m_rocketBoost = 0.0f;
+    [SerializeField] float m_rocketFuel = 10.0f;
+    [SerializeField] float m_maxRocketFuel = 10.0f;
+    [SerializeField] float m_rocketBoostAmount = 100f;
+
+    [SerializeField] float m_engineTorque = 100f;
+    [SerializeField] float m_brakeTorque = 100f;
+    [SerializeField] float m_maxSteeringAngle = 70f;
+
+    VRCPlayerApi playerApi;
+
+    float RocketBoost
+    {
+        set => m_rocketBoost = value;
+        get => m_rocketBoost;
+    }
+
+    float RocketFuel
+    {
+        set => m_rocketFuel = value;
+        get => m_rocketFuel;
+    }
+    float MaxRocketFuel
+    {
+        set => m_maxRocketFuel = value;
+        get => m_maxRocketFuel;
+    }
+
+    float Throttle
+    {
+        set
+        {
+            m_throttle = value;
+        }
+        get => m_throttle;
+    }
+
+    float Brake
+    {
+        set
+        {
+            m_brake = value;
+        }
+        get => m_brake;
+    }
+
+    float Steering
+    {
+        set
+        {
+            m_steering = value;
+        }
+        get => m_steering;
+    }
+
     void Start()
     {
         m_rigidBody = GetComponent<Rigidbody>();
+        m_rigidBody.centerOfMass = -Vector3.up * 0.3f;
+        RocketFuel = MaxRocketFuel;
+        playerApi = Networking.LocalPlayer;
     }
 
     void FixedUpdate()
     {
         handleInput();
+        updateWheelRotations();
+        applyThrottle();
+        applyBrake();
+        applySteering();
+        applyRocketBoost();
+    }
+
+    public override void InputJump(bool value, UdonInputEventArgs args)
+    {
+        if (value)
+        {
+            m_rigidBody.AddForce(Vector3.up * m_jumpAmount, ForceMode.Acceleration);
+        }
+    }
+
+    public override void InputUse(bool value, UdonInputEventArgs args)
+    {
+        if (!playerApi.IsUserInVR())
+        {
+            return; // different controls for PC
+        }
+
+        var throttle = 0.0f;
+
+        if (!value)
+        {
+            Throttle = throttle;
+            return;
+        }
+        else if (args.handType == HandType.RIGHT)
+        {
+
+            // forward
+            throttle = args.floatValue;
+        }
+        else if (args.handType == HandType.LEFT)
+        {
+            // reverse
+            throttle = -args.floatValue;
+        }
+        Throttle = throttle;
+    }
+
+    public override void InputMoveHorizontal(float value, UdonInputEventArgs args)
+    {
+        Steering = value;
+    }
+
+    public override void InputGrab(bool value, UdonInputEventArgs args)
+    {
+        if (!playerApi.IsUserInVR())
+        {
+            return;
+        }
+
+        var rocketBoost = 0.0f;
+        var val = 0.0f;
+        if (value)
+        {
+            val = 1.0f;
+        }
+        rocketBoost = val;
+    }
+
+    private void applyRocketBoost()
+    {
+        if (RocketBoost < 0.1 && RocketFuel < MaxRocketFuel)
+        {
+            RocketFuel += 0.05f;
+            return;
+        }
+        if (RocketFuel <= 0)
+        {
+            return;
+        }
+        RocketFuel -= 0.05f;
+        m_rigidBody.AddForce(RocketBoost * m_rocketBoostAmount * transform.forward, ForceMode.Acceleration);
+    }
+
+    private void applySteering()
+    {
+        var responsiveness = 5.0f;
+        float max = m_maxSteeringAngle * (1 - Mathf.Min(m_rigidBody.velocity.magnitude / 50, 0.9f));
+        var value = Mathf.Lerp(m_wheelColliderFL.steerAngle, Steering * max, Time.fixedDeltaTime * responsiveness);
+        m_wheelColliderFL.steerAngle = value;
+        m_wheelColliderFR.steerAngle = value;
+    }
+
+    private void applyThrottle()
+    {
+        var newTorque = Throttle * m_engineTorque;
+        m_wheelColliderFL.motorTorque = newTorque;
+        m_wheelColliderFR.motorTorque = newTorque;
+        m_wheelColliderBL.motorTorque = newTorque;
+        m_wheelColliderBR.motorTorque = newTorque;
+    }
+    private void applyBrake()
+    {
+        var newTorque = Brake * m_brakeTorque;
+        m_wheelColliderFL.brakeTorque = newTorque;
+        m_wheelColliderFR.brakeTorque = newTorque;
+        m_wheelColliderBL.brakeTorque = newTorque;
+        m_wheelColliderBR.brakeTorque = newTorque;
+    }
+
+
+    private void handleInput()
+    {
+        if (playerApi.IsUserInVR())
+        {
+            return; // only for non VR
+        }
+        updateThrottle();
+        updateBrake();
+        updateRocketBoost();
+    }
+
+    private void updateRocketBoost()
+    {
+        var rocketBoost = 0.0f;
+        var speed = 2.0f;
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            rocketBoost = Mathf.Lerp(RocketBoost, 1.0f, Time.fixedDeltaTime * speed);
+        }
+        RocketBoost = rocketBoost;
+    }
+
+    private void updateWheelRotations()
+    {
         wheeColliderUpdateRotation(m_wheelColliderFL, m_wheelFL, true);
         wheeColliderUpdateRotation(m_wheelColliderFR, m_wheelFR, false);
         wheeColliderUpdateRotation(m_wheelColliderBL, m_wheelBL, true);
         wheeColliderUpdateRotation(m_wheelColliderBR, m_wheelBR, false);
     }
 
-    private void handleInput()
+    private void updateThrottle()
     {
-        var right = (m_cameraController.Rotation * Vector3.right).normalized;
-        var forward = Vector3.Cross(right, Vector3.up).normalized;
+        var throttle = 0.0f;
+        var speed = 2.0f;
         if (Input.GetKey(KeyCode.W))
         {
-            m_rigidBody.AddForce(forward * m_force, ForceMode.Acceleration);
+            throttle = Mathf.Lerp(Throttle, 1.0f, Time.fixedDeltaTime * speed);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            m_rigidBody.AddForce(-forward * m_force, ForceMode.Acceleration);
+            throttle = Mathf.Lerp(Throttle, -1.0f, Time.fixedDeltaTime * speed);
         }
-        if (Input.GetKey(KeyCode.A))
+        Throttle = throttle;
+    }
+    private void updateBrake()
+    {
+        var brake = 0.0f;
+        var speed = 2.0f;
+        if (Input.GetKey(KeyCode.Space))
         {
-            m_rigidBody.AddForce(-right * m_force, ForceMode.Acceleration);
+            brake = Mathf.Lerp(Brake, 1.0f, Time.fixedDeltaTime * speed);
         }
-        if (Input.GetKey(KeyCode.D))
-        {
-            m_rigidBody.AddForce(right * m_force, ForceMode.Acceleration);
-        }
+        Brake = brake;
     }
 
     private void wheeColliderUpdateRotation(WheelCollider collider, GameObject wheel, bool left)

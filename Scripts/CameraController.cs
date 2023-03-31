@@ -85,7 +85,7 @@ public class CameraController : UdonSharpBehaviour
     private void updateRotation()
     {
         var speed = 20f;
-        var vector = m_ball.position - transform.position;
+        var vector = Vector3.Lerp(m_car.position, m_ball.position, 0.5f) - transform.position;
         var rotation = Quaternion.LookRotation(vector);
         Rotation = Quaternion.Lerp(Rotation, rotation, Time.fixedDeltaTime * speed);
     }
