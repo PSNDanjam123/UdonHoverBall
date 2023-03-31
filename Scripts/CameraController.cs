@@ -33,21 +33,36 @@ public class CameraController : UdonSharpBehaviour
         m_camera = GetComponentInChildren<Camera>();
         m_camera.depthTextureMode = DepthTextureMode.Depth;
         m_camera.stereoTargetEye = StereoTargetEyeMask.Both;
+        Disable();
+    }
+
+    public void SetCar(Transform car)
+    {
+        m_car = car;
+    }
+
+    public void UnsetCar()
+    {
+        m_car = null;
     }
 
     void Update()
     {
+        if (!m_camera.enabled)
+        {
+            return;
+        }
         updatePosition();
         updateRotation();
         handleInput();
     }
 
-    void Enable()
+    public void Enable()
     {
         m_camera.enabled = true;
     }
 
-    void Disable()
+    public void Disable()
     {
         m_camera.enabled = false;
     }
@@ -77,9 +92,10 @@ public class CameraController : UdonSharpBehaviour
         offset += forward * m_viewOffset.z;
         offset += up * m_viewOffset.y;
 
-        var speed = 20f;
         var position = m_car.position + offset;
-        Position = Vector3.Lerp(Position, position, Time.fixedDeltaTime * speed);
+        //var speed = 20f;
+        //Position = Vector3.Lerp(Position, position, Time.fixedDeltaTime * speed);
+        Position = position;
     }
 
     private void updateRotation()

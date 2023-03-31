@@ -4982,6 +4982,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7271615422450504830}
+  - component: {fileID: 5712548915380576894}
+  - component: {fileID: 4819320244874231711}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -5007,6 +5009,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5712548915380576894
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271615422450504831}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.840496, y: 1.438225, z: 2.923695}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4819320244874231711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271615422450504831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1783056023, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllowCollisionOwnershipTransfer: 0
 --- !u!1 &7577167737084790545
 GameObject:
   m_ObjectHideFlags: 0

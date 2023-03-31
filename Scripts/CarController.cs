@@ -5,7 +5,7 @@ using VRC.SDKBase;
 using VRC.Udon;
 using VRC.Udon.Common;
 
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class CarController : UdonSharpBehaviour
 {
     Rigidbody m_rigidBody;
@@ -23,7 +23,7 @@ public class CarController : UdonSharpBehaviour
     [SerializeField] GameObject m_wheelBR;
     [SerializeField] GameObject m_wheelBL;
 
-    [SerializeField] float m_steering = 0.0f;
+    [SerializeField, UdonSynced(UdonSyncMode.Smooth)] float m_steering = 0.0f;
     [SerializeField] float m_throttle = 0.0f;
     [SerializeField] float m_brake = 0.0f;
     [SerializeField] float m_jumpAmount = 1000f;
@@ -35,6 +35,8 @@ public class CarController : UdonSharpBehaviour
     [SerializeField] float m_engineTorque = 100f;
     [SerializeField] float m_brakeTorque = 100f;
     [SerializeField] float m_maxSteeringAngle = 70f;
+
+    [SerializeField, UdonSynced] string owner;
 
     VRCPlayerApi playerApi;
 
@@ -92,16 +94,66 @@ public class CarController : UdonSharpBehaviour
 
     void FixedUpdate()
     {
-        handleInput();
         updateWheelRotations();
+        if (!ControlsCar())
+        {
+            return;
+        }
+        handleInput();
         applyThrottle();
         applyBrake();
         applySteering();
         applyRocketBoost();
     }
 
+    public override void Interact()
+    {
+        SetOwner();
+        owner = Networking.LocalPlayer.displayName;
+        m_cameraController.SetCar(gameObject.transform);
+        m_cameraController.Enable();
+        RequestSerialization();
+    }
+
+    public override void OnDeserialization()
+    {
+        if (!IsOwner())
+        {
+            return;
+        }
+    }
+
+    public override void OnPlayerRespawn(VRCPlayerApi player)
+    {
+        if (!ControlsCar())
+        {
+            return; // not them
+        }
+        owner = null;
+        m_cameraController.Disable();
+        m_cameraController.UnsetCar();
+    }
+
+    public override void OnPlayerLeft(VRCPlayerApi player)
+    {
+        if (ControlsCar())
+        {
+            return;
+        }
+        if (!IsOwner())
+        {
+            return;
+        }
+        owner = null;
+        RequestSerialization();
+    }
+
     public override void InputJump(bool value, UdonInputEventArgs args)
     {
+        if (!ControlsCar())
+        {
+            return; // not them
+        }
         if (value)
         {
             m_rigidBody.AddForce(Vector3.up * m_jumpAmount, ForceMode.Acceleration);
@@ -110,6 +162,10 @@ public class CarController : UdonSharpBehaviour
 
     public override void InputUse(bool value, UdonInputEventArgs args)
     {
+        if (!ControlsCar())
+        {
+            return; // not them
+        }
         if (!playerApi.IsUserInVR())
         {
             return; // different controls for PC
@@ -138,11 +194,19 @@ public class CarController : UdonSharpBehaviour
 
     public override void InputMoveHorizontal(float value, UdonInputEventArgs args)
     {
+        if (!ControlsCar())
+        {
+            return; // not them
+        }
         Steering = value;
     }
 
     public override void InputGrab(bool value, UdonInputEventArgs args)
     {
+        if (!ControlsCar())
+        {
+            return; // not them
+        }
         if (!playerApi.IsUserInVR())
         {
             return;
@@ -268,5 +332,28 @@ public class CarController : UdonSharpBehaviour
 
         wheel.transform.position = pos;
         wheel.transform.rotation = quat;
+    }
+
+    bool IsOwner(VRCPlayerApi playerApi = null)
+    {
+        if (playerApi == null)
+        {
+            playerApi = Networking.LocalPlayer;
+        }
+        return Networking.IsOwner(playerApi, gameObject);
+    }
+
+    bool ControlsCar(VRCPlayerApi playerApi = null)
+    {
+        if (playerApi == null)
+        {
+            playerApi = Networking.LocalPlayer;
+        }
+        return owner == playerApi.displayName;
+    }
+
+    void SetOwner()
+    {
+        Networking.SetOwner(Networking.LocalPlayer, gameObject);
     }
 }
