@@ -30,10 +30,10 @@ public class Demo : UdonSharpBehaviour
         {
             return;
         }
-        if (carController.Owner != Networking.LocalPlayer.displayName)
+        /*if (carController.Owner != Networking.LocalPlayer.displayName)
         {
             return;
-        }
+        }*/
         SetOwner();
     }
 

@@ -2,6 +2,7 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using UnityEngine.UI;
 using VRC.Udon;
 using VRC.SDK3;
 using VRC.Udon.Common;
@@ -9,366 +10,244 @@ using VRC.Udon.Common;
 [RequireComponent(typeof(BoxCollider), typeof(Rigidbody)), UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class CarController : UdonSharpBehaviour
 {
-    Rigidbody m_legacy_rigidBody;
+    VRCPlayerApi m_playerApi;
+    Rigidbody m_rigidBody;
 
-    [SerializeField] float m_legacy_force = 2.0f;
-    [SerializeField] CameraController m_legacy_cameraController;
+    [SerializeField, UdonSynced] string m_driver;
 
-    [Header("Wheels")]
-    [SerializeField] WheelCollider m_legacy_wheelColliderFR;
-    [SerializeField] WheelCollider m_legacy_wheelColliderFL;
-    [SerializeField] WheelCollider m_legacy_wheelColliderBR;
-    [SerializeField] WheelCollider m_legacy_wheelColliderBL;
-    [SerializeField] GameObject m_legacy_wheelFR;
-    [SerializeField] GameObject m_legacy_wheelFL;
-    [SerializeField] GameObject m_legacy_wheelBR;
-    [SerializeField] GameObject m_legacy_wheelBL;
+    [Header("Components")]
+    [SerializeField] CameraController m_camera;
+    [SerializeField] WheelCollider[] m_wheelColliders;
+    [SerializeField] Transform[] m_wheelMeshes;
 
-    [SerializeField, UdonSynced(UdonSyncMode.Smooth)] float m_legacy_steering = 0.0f;
-    [SerializeField] float m_legacy_throttle = 0.0f;
-    [SerializeField] float m_legacy_brake = 0.0f;
-    [SerializeField] float m_legacy_jumpAmount = 1000f;
-    [SerializeField] float m_legacy_rocketBoost = 0.0f;
-    [SerializeField] float m_legacy_rocketFuel = 10.0f;
-    [SerializeField] float m_legacy_maxRocketFuel = 10.0f;
-    [SerializeField] float m_legacy_rocketBoostAmount = 100f;
+    [Header("Settings")]
 
-    [SerializeField] float m_legacy_engineTorque = 100f;
-    [SerializeField] float m_legacy_brakeTorque = 100f;
-    [SerializeField] float m_legacy_maxSteeringAngle = 70f;
-
-    [SerializeField, UdonSynced] string m_legacy_owner;
-
-    VRCPlayerApi playerApi;
-
-    public string Owner
-    {
-        private set => m_legacy_owner = value;
-        get => m_legacy_owner;
-    }
-
-    float RocketBoost
-    {
-        set => m_legacy_rocketBoost = value;
-        get => m_legacy_rocketBoost;
-    }
-
-    float RocketFuel
-    {
-        set => m_legacy_rocketFuel = value;
-        get => m_legacy_rocketFuel;
-    }
-    float MaxRocketFuel
-    {
-        set => m_legacy_maxRocketFuel = value;
-        get => m_legacy_maxRocketFuel;
-    }
-
-    float Throttle
+    [SerializeField, Range(0, 100000)] float m_mass = 1000; public float mass
     {
         set
         {
-            m_legacy_throttle = value;
+            m_mass = value;
+            if (m_rigidBody.mass != value)
+            {
+                m_rigidBody.mass = value;
+            }
         }
-        get => m_legacy_throttle;
+        get => m_mass;
     }
+    [SerializeField, Range(0, 100)] float m_maxSteeringAngle = 45f;
 
-    float Brake
+    [Header("Inputs")]
+    [SerializeField, Range(0, 1)] float m_inputLeftTrigger = 0.0f; public float inputLeftTrigger
     {
-        set
-        {
-            m_legacy_brake = value;
-        }
-        get => m_legacy_brake;
+        private set => m_inputLeftTrigger = value;
+        get => m_inputLeftTrigger;
     }
-
-    float Steering
+    [SerializeField, Range(0, 1)] float m_inputRightTrigger = 0.0f; public float inputRightTrigger
     {
-        set
-        {
-            m_legacy_steering = value;
-        }
-        get => m_legacy_steering;
+        private set => m_inputRightTrigger = value;
+        get => m_inputRightTrigger;
+    }
+    [SerializeField, Range(-1, 1)] float m_inputLeftThumbstickHorizontal = 0.0f; public float inputLeftThumbstickHorizontal
+    {
+        private set => m_inputLeftThumbstickHorizontal = value;
+        get => m_inputLeftThumbstickHorizontal;
+    }
+    [SerializeField, Range(-1, 1)] float m_inputRightThumbstickHorizontal = 0.0f; public float inputRightThumbstickHorizontal
+    {
+        private set => m_inputRightThumbstickHorizontal = value;
+        get => m_inputRightThumbstickHorizontal;
     }
 
     void Start()
     {
-        m_legacy_rigidBody = GetComponent<Rigidbody>();
-        m_legacy_rigidBody.centerOfMass = -Vector3.up * 0.3f;
-        RocketFuel = MaxRocketFuel;
-        playerApi = Networking.LocalPlayer;
+        m_playerApi = Networking.LocalPlayer;
+        m_rigidBody = GetComponent<Rigidbody>();
+        m_rigidBody.useGravity = true;
+        initSettings();
     }
+
+    void Update()
+    {
+        initSettings();
+        getInputs();
+    }
+
 
     void FixedUpdate()
     {
-        updateWheelRotations();
-        if (!ControlsCar())
-        {
-            return;
-        }
-        handleInput();
         applyThrottle();
         applyBrake();
         applySteering();
-        applyRocketBoost();
+        updateWheelMeshes();
+    }
+
+    private void applyThrottle()
+    {
+        var throttle = inputRightTrigger;
+
+        var backL = m_wheelColliders[2];
+        var backR = m_wheelColliders[3];
+
+        backL.motorTorque = throttle * 100;
+        backR.motorTorque = throttle * 100;
+    }
+
+    private void applyBrake()
+    {
+        var brake = inputLeftTrigger;
+
+        foreach (var collider in m_wheelColliders)
+        {
+            collider.brakeTorque = brake * 100;
+        }
+    }
+
+    private void applySteering()
+    {
+        var frontL = m_wheelColliders[0];
+        var frontR = m_wheelColliders[1];
+
+        frontL.steerAngle = inputLeftThumbstickHorizontal * m_maxSteeringAngle;
+        frontR.steerAngle = inputLeftThumbstickHorizontal * m_maxSteeringAngle;
+    }
+    private void getInputs()
+    {
+        // VR Inputs
+        if (m_playerApi.IsUserInVR())
+        {
+            getVRInputs();
+            return;
+        }
+
+        getKMInputs();
+    }
+
+    private void getVRInputs()
+    {
+        // Naming
+        var prefix = "Oculus_CrossPlatform_";
+        var left = prefix + "Primary";
+        var right = prefix + "Secondary";
+
+        // Trigger
+        inputLeftTrigger = Input.GetAxis(left + "IndexTrigger");
+        inputRightTrigger = Input.GetAxis(right + "IndexTrigger");
+
+        // Thumbstick
+        inputLeftThumbstickHorizontal = Input.GetAxis(left + "ThumbstickHorizontal");
+        inputRightThumbstickHorizontal = Input.GetAxis(right + "ThumbstickHorizontal");
+    }
+
+    private void getKMInputs()
+    {
+        var responsiveness = 4.0f;
+
+        // Trigger
+        inputLeftTrigger = handleKMInputLerp(KeyCode.S, 1.0f, 0.0f, inputLeftTrigger, responsiveness);
+        inputRightTrigger = handleKMInputLerp(KeyCode.W, 1.0f, 0.0f, inputRightTrigger, responsiveness);
+
+        // Thumbstick
+        var left = Input.GetKey(KeyCode.A);
+        inputLeftThumbstickHorizontal = handleKMInputLerp(left ? KeyCode.A : KeyCode.D, left ? -1.0f : 1.0f, 0.0f, inputLeftThumbstickHorizontal, responsiveness);
+    }
+
+    private float handleKMInputLerp(KeyCode keyCode, float input, float nonInput, float current, float responsiveness = 1.0f)
+    {
+        if (!Input.GetKey(keyCode))
+        {
+            input = nonInput;
+        }
+        return Mathf.Lerp(current, input, Time.fixedDeltaTime * responsiveness);
+    }
+
+    private void initSettings()
+    {
+        mass = m_mass;
+    }
+
+    private void updateWheelMeshes()
+    {
+        for (var i = 0; i < m_wheelColliders.Length; i++)
+        {
+            var collider = m_wheelColliders[i];
+            var mesh = m_wheelMeshes[i];
+            var pos = mesh.position;
+            var rot = mesh.rotation;
+            collider.GetWorldPose(out pos, out rot);
+            mesh.transform.position = pos;
+            mesh.transform.rotation = rot;
+        }
     }
 
     public override void Interact()
     {
-        SetOwner();
-        m_legacy_owner = Networking.LocalPlayer.displayName;
-        m_legacy_cameraController.SetCar(gameObject.transform);
-        m_legacy_cameraController.Enable();
-        Networking.LocalPlayer.TeleportTo(Vector3.up * 1000f, Quaternion.identity);
-        RequestSerialization();
-    }
-
-    public override void OnDeserialization()
-    {
-        if (!IsOwner())
+        if (!IsDriver())
         {
-            return;
+            Enter();
         }
     }
 
     public override void OnPlayerRespawn(VRCPlayerApi player)
     {
-        if (!ControlsCar())
+        if (m_driver == player.displayName)
         {
-            return; // not them
+            Exit();
         }
-        m_legacy_owner = null;
-        m_legacy_cameraController.Disable();
-        m_legacy_cameraController.UnsetCar();
     }
 
     public override void OnPlayerLeft(VRCPlayerApi player)
     {
-        if (ControlsCar())
+        if (!IsOwner() || m_driver != player.displayName)
         {
             return;
         }
-        if (!IsOwner())
-        {
-            return;
-        }
-        m_legacy_owner = null;
+        m_driver = "";
         RequestSerialization();
     }
 
-    public override void InputJump(bool value, UdonInputEventArgs args)
+    void Enter()
     {
-        if (!ControlsCar())
-        {
-            return; // not them
-        }
-        if (value)
-        {
-            m_legacy_rigidBody.AddForce(Vector3.up * m_legacy_jumpAmount, ForceMode.Acceleration);
-        }
+        SetOwner();
+        m_driver = Networking.LocalPlayer.displayName;
+        m_camera.SetCar(gameObject.transform);
+        m_camera.Enable();
+        Networking.LocalPlayer.TeleportTo(Vector3.up * 1000f, Quaternion.identity);
+        RequestSerialization();
     }
 
-    public override void InputUse(bool value, UdonInputEventArgs args)
+    void Exit()
     {
-        if (!ControlsCar())
-        {
-            return; // not them
-        }
-        if (!playerApi.IsUserInVR())
-        {
-            return; // different controls for PC
-        }
-
-        var throttle = 0.0f;
-
-        if (args.handType == HandType.RIGHT)
-        {
-            // forward
-            throttle = 1.0f;
-        }
-        else
-        {
-            // reverse
-            throttle = -1.0f;
-        }
-        Throttle = throttle;
+        SetOwner();
+        m_camera.Disable();
+        m_camera.SetCar(null);
+        m_driver = "";
+        RequestSerialization();
     }
 
-    public override void InputMoveHorizontal(float value, UdonInputEventArgs args)
+    bool IsDriver(VRCPlayerApi playerApi = null)
     {
-        if (!ControlsCar())
+        if (playerApi == null)
         {
-            return; // not them
+            playerApi = m_playerApi;
         }
-        Steering = value;
-    }
-
-    public override void InputLookHorizontal(float value, UdonInputEventArgs args)
-    {
-        var multiplier = 5.0f;
-        m_legacy_rigidBody.AddTorque(Vector3.up * value * multiplier, ForceMode.Acceleration);
-    }
-
-    public override void InputLookVertical(float value, UdonInputEventArgs args)
-    {
-        var multiplier = 5.0f;
-        var right = Vector3.Cross(m_legacy_rigidBody.transform.forward, Vector3.up);
-        m_legacy_rigidBody.AddTorque(Vector3.right * value * multiplier, ForceMode.Acceleration);
-    }
-
-    public override void InputGrab(bool value, UdonInputEventArgs args)
-    {
-        if (!ControlsCar())
-        {
-            return; // not them
-        }
-        if (!playerApi.IsUserInVR())
-        {
-            return;
-        }
-        var rocketBoost = 0.0f;
-        var val = 0.0f;
-        if (value)
-        {
-            val = 1.0f;
-        }
-        rocketBoost = val;
-        RocketBoost = rocketBoost;
-    }
-
-    private void applyRocketBoost()
-    {
-        if (RocketBoost < 0.1 && RocketFuel < MaxRocketFuel)
-        {
-            RocketFuel += 0.05f;
-            return;
-        }
-        if (RocketFuel <= 0)
-        {
-            return;
-        }
-        RocketFuel -= 0.05f;
-        m_legacy_rigidBody.AddForce(RocketBoost * m_legacy_rocketBoostAmount * transform.forward, ForceMode.Acceleration);
-    }
-
-    private void applySteering()
-    {
-        var responsiveness = 5.0f;
-        float max = m_legacy_maxSteeringAngle * (1 - Mathf.Min(m_legacy_rigidBody.velocity.magnitude / 50, 0.9f));
-        var value = Mathf.Lerp(m_legacy_wheelColliderFL.steerAngle, Steering * max, Time.fixedDeltaTime * responsiveness);
-        m_legacy_wheelColliderFL.steerAngle = value;
-        m_legacy_wheelColliderFR.steerAngle = value;
-    }
-
-    private void applyThrottle()
-    {
-        var newTorque = Throttle * m_legacy_engineTorque;
-        m_legacy_wheelColliderFL.motorTorque = newTorque;
-        m_legacy_wheelColliderFR.motorTorque = newTorque;
-        m_legacy_wheelColliderBL.motorTorque = newTorque;
-        m_legacy_wheelColliderBR.motorTorque = newTorque;
-    }
-    private void applyBrake()
-    {
-        var newTorque = Brake * m_legacy_brakeTorque;
-        m_legacy_wheelColliderFL.brakeTorque = newTorque;
-        m_legacy_wheelColliderFR.brakeTorque = newTorque;
-        m_legacy_wheelColliderBL.brakeTorque = newTorque;
-        m_legacy_wheelColliderBR.brakeTorque = newTorque;
-    }
-
-
-    private void handleInput()
-    {
-        if (playerApi.IsUserInVR())
-        {
-            return; // only for non VR
-        }
-        updateThrottle();
-        updateBrake();
-        updateRocketBoost();
-    }
-
-    private void updateRocketBoost()
-    {
-        var rocketBoost = 0.0f;
-        var speed = 2.0f;
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            rocketBoost = Mathf.Lerp(RocketBoost, 1.0f, Time.fixedDeltaTime * speed);
-        }
-        RocketBoost = rocketBoost;
-    }
-
-    private void updateWheelRotations()
-    {
-        wheeColliderUpdateRotation(m_legacy_wheelColliderFL, m_legacy_wheelFL, true);
-        wheeColliderUpdateRotation(m_legacy_wheelColliderFR, m_legacy_wheelFR, false);
-        wheeColliderUpdateRotation(m_legacy_wheelColliderBL, m_legacy_wheelBL, true);
-        wheeColliderUpdateRotation(m_legacy_wheelColliderBR, m_legacy_wheelBR, false);
-    }
-
-    private void updateThrottle()
-    {
-        var throttle = 0.0f;
-        var speed = 2.0f;
-        if (Input.GetKey(KeyCode.W))
-        {
-            throttle = Mathf.Lerp(Throttle, 1.0f, Time.fixedDeltaTime * speed);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            throttle = Mathf.Lerp(Throttle, -1.0f, Time.fixedDeltaTime * speed);
-        }
-        Throttle = throttle;
-    }
-    private void updateBrake()
-    {
-        var brake = 0.0f;
-        var speed = 2.0f;
-        if (Input.GetKey(KeyCode.Space))
-        {
-            brake = Mathf.Lerp(Brake, 1.0f, Time.fixedDeltaTime * speed);
-        }
-        Brake = brake;
-    }
-
-    private void wheeColliderUpdateRotation(WheelCollider collider, GameObject wheel, bool left)
-    {
-        var pos = wheel.transform.position;
-        var quat = wheel.transform.rotation;
-
-        collider.GetWorldPose(out pos, out quat);
-
-        if (left)
-        {
-            quat *= Quaternion.AngleAxis(180, Vector3.up);
-        }
-
-        wheel.transform.position = pos;
-        wheel.transform.rotation = quat;
+        return m_driver == playerApi.displayName;
     }
 
     bool IsOwner(VRCPlayerApi playerApi = null)
     {
         if (playerApi == null)
         {
-            playerApi = Networking.LocalPlayer;
+            playerApi = m_playerApi;
         }
         return Networking.IsOwner(playerApi, gameObject);
     }
 
-    bool ControlsCar(VRCPlayerApi playerApi = null)
+    void SetOwner(VRCPlayerApi playerApi = null)
     {
         if (playerApi == null)
         {
-            playerApi = Networking.LocalPlayer;
+            playerApi = m_playerApi;
         }
-        return m_legacy_owner == playerApi.displayName;
-    }
-
-    void SetOwner()
-    {
-        Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        Networking.SetOwner(playerApi, gameObject);
     }
 }
