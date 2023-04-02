@@ -50,13 +50,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_rigidBody
+      Data: m_legacy_rigidBody
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_rigidBody
+      Data: m_legacy_rigidBody
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib
@@ -104,13 +104,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_force
+      Data: m_legacy_force
     - Name: $v
       Entry: 7
       Data: 5|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_force
+      Data: m_legacy_force
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 6|System.RuntimeType, mscorlib
@@ -164,13 +164,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_cameraController
+      Data: m_legacy_cameraController
     - Name: $v
       Entry: 7
       Data: 9|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_cameraController
+      Data: m_legacy_cameraController
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 10|System.RuntimeType, mscorlib
@@ -230,13 +230,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelColliderFR
+      Data: m_legacy_wheelColliderFR
     - Name: $v
       Entry: 7
       Data: 14|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelColliderFR
+      Data: m_legacy_wheelColliderFR
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 15|System.RuntimeType, mscorlib
@@ -299,13 +299,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelColliderFL
+      Data: m_legacy_wheelColliderFL
     - Name: $v
       Entry: 7
       Data: 19|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelColliderFL
+      Data: m_legacy_wheelColliderFL
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 15
@@ -353,13 +353,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelColliderBR
+      Data: m_legacy_wheelColliderBR
     - Name: $v
       Entry: 7
       Data: 22|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelColliderBR
+      Data: m_legacy_wheelColliderBR
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 15
@@ -407,13 +407,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelColliderBL
+      Data: m_legacy_wheelColliderBL
     - Name: $v
       Entry: 7
       Data: 25|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelColliderBL
+      Data: m_legacy_wheelColliderBL
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 15
@@ -461,13 +461,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelFR
+      Data: m_legacy_wheelFR
     - Name: $v
       Entry: 7
       Data: 28|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelFR
+      Data: m_legacy_wheelFR
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 29|System.RuntimeType, mscorlib
@@ -521,13 +521,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelFL
+      Data: m_legacy_wheelFL
     - Name: $v
       Entry: 7
       Data: 32|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelFL
+      Data: m_legacy_wheelFL
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 29
@@ -575,13 +575,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelBR
+      Data: m_legacy_wheelBR
     - Name: $v
       Entry: 7
       Data: 35|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelBR
+      Data: m_legacy_wheelBR
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 29
@@ -629,13 +629,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_wheelBL
+      Data: m_legacy_wheelBL
     - Name: $v
       Entry: 7
       Data: 38|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_wheelBL
+      Data: m_legacy_wheelBL
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 29
@@ -683,13 +683,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_steering
+      Data: m_legacy_steering
     - Name: $v
       Entry: 7
       Data: 41|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_steering
+      Data: m_legacy_steering
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -743,13 +743,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_throttle
+      Data: m_legacy_throttle
     - Name: $v
       Entry: 7
       Data: 45|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_throttle
+      Data: m_legacy_throttle
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -797,13 +797,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_brake
+      Data: m_legacy_brake
     - Name: $v
       Entry: 7
       Data: 48|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_brake
+      Data: m_legacy_brake
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -851,13 +851,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_jumpAmount
+      Data: m_legacy_jumpAmount
     - Name: $v
       Entry: 7
       Data: 51|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_jumpAmount
+      Data: m_legacy_jumpAmount
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -905,13 +905,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_rocketBoost
+      Data: m_legacy_rocketBoost
     - Name: $v
       Entry: 7
       Data: 54|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_rocketBoost
+      Data: m_legacy_rocketBoost
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -959,13 +959,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_rocketFuel
+      Data: m_legacy_rocketFuel
     - Name: $v
       Entry: 7
       Data: 57|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_rocketFuel
+      Data: m_legacy_rocketFuel
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -1013,13 +1013,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_maxRocketFuel
+      Data: m_legacy_maxRocketFuel
     - Name: $v
       Entry: 7
       Data: 60|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_maxRocketFuel
+      Data: m_legacy_maxRocketFuel
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -1067,13 +1067,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_rocketBoostAmount
+      Data: m_legacy_rocketBoostAmount
     - Name: $v
       Entry: 7
       Data: 63|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_rocketBoostAmount
+      Data: m_legacy_rocketBoostAmount
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -1121,13 +1121,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_engineTorque
+      Data: m_legacy_engineTorque
     - Name: $v
       Entry: 7
       Data: 66|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_engineTorque
+      Data: m_legacy_engineTorque
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -1175,13 +1175,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_brakeTorque
+      Data: m_legacy_brakeTorque
     - Name: $v
       Entry: 7
       Data: 69|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_brakeTorque
+      Data: m_legacy_brakeTorque
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -1229,13 +1229,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_maxSteeringAngle
+      Data: m_legacy_maxSteeringAngle
     - Name: $v
       Entry: 7
       Data: 72|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_maxSteeringAngle
+      Data: m_legacy_maxSteeringAngle
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 6
@@ -1283,13 +1283,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: m_owner
+      Data: m_legacy_owner
     - Name: $v
       Entry: 7
       Data: 75|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: m_owner
+      Data: m_legacy_owner
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 76|System.RuntimeType, mscorlib

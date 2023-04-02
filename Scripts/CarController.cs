@@ -3,97 +3,98 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.SDK3;
 using VRC.Udon.Common;
 
-[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
+[RequireComponent(typeof(BoxCollider), typeof(Rigidbody)), UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class CarController : UdonSharpBehaviour
 {
-    Rigidbody m_rigidBody;
+    Rigidbody m_legacy_rigidBody;
 
-    [SerializeField] float m_force = 2.0f;
-    [SerializeField] CameraController m_cameraController;
+    [SerializeField] float m_legacy_force = 2.0f;
+    [SerializeField] CameraController m_legacy_cameraController;
 
     [Header("Wheels")]
-    [SerializeField] WheelCollider m_wheelColliderFR;
-    [SerializeField] WheelCollider m_wheelColliderFL;
-    [SerializeField] WheelCollider m_wheelColliderBR;
-    [SerializeField] WheelCollider m_wheelColliderBL;
-    [SerializeField] GameObject m_wheelFR;
-    [SerializeField] GameObject m_wheelFL;
-    [SerializeField] GameObject m_wheelBR;
-    [SerializeField] GameObject m_wheelBL;
+    [SerializeField] WheelCollider m_legacy_wheelColliderFR;
+    [SerializeField] WheelCollider m_legacy_wheelColliderFL;
+    [SerializeField] WheelCollider m_legacy_wheelColliderBR;
+    [SerializeField] WheelCollider m_legacy_wheelColliderBL;
+    [SerializeField] GameObject m_legacy_wheelFR;
+    [SerializeField] GameObject m_legacy_wheelFL;
+    [SerializeField] GameObject m_legacy_wheelBR;
+    [SerializeField] GameObject m_legacy_wheelBL;
 
-    [SerializeField, UdonSynced(UdonSyncMode.Smooth)] float m_steering = 0.0f;
-    [SerializeField] float m_throttle = 0.0f;
-    [SerializeField] float m_brake = 0.0f;
-    [SerializeField] float m_jumpAmount = 1000f;
-    [SerializeField] float m_rocketBoost = 0.0f;
-    [SerializeField] float m_rocketFuel = 10.0f;
-    [SerializeField] float m_maxRocketFuel = 10.0f;
-    [SerializeField] float m_rocketBoostAmount = 100f;
+    [SerializeField, UdonSynced(UdonSyncMode.Smooth)] float m_legacy_steering = 0.0f;
+    [SerializeField] float m_legacy_throttle = 0.0f;
+    [SerializeField] float m_legacy_brake = 0.0f;
+    [SerializeField] float m_legacy_jumpAmount = 1000f;
+    [SerializeField] float m_legacy_rocketBoost = 0.0f;
+    [SerializeField] float m_legacy_rocketFuel = 10.0f;
+    [SerializeField] float m_legacy_maxRocketFuel = 10.0f;
+    [SerializeField] float m_legacy_rocketBoostAmount = 100f;
 
-    [SerializeField] float m_engineTorque = 100f;
-    [SerializeField] float m_brakeTorque = 100f;
-    [SerializeField] float m_maxSteeringAngle = 70f;
+    [SerializeField] float m_legacy_engineTorque = 100f;
+    [SerializeField] float m_legacy_brakeTorque = 100f;
+    [SerializeField] float m_legacy_maxSteeringAngle = 70f;
 
-    [SerializeField, UdonSynced] string m_owner;
+    [SerializeField, UdonSynced] string m_legacy_owner;
 
     VRCPlayerApi playerApi;
 
     public string Owner
     {
-        private set => m_owner = value;
-        get => m_owner;
+        private set => m_legacy_owner = value;
+        get => m_legacy_owner;
     }
 
     float RocketBoost
     {
-        set => m_rocketBoost = value;
-        get => m_rocketBoost;
+        set => m_legacy_rocketBoost = value;
+        get => m_legacy_rocketBoost;
     }
 
     float RocketFuel
     {
-        set => m_rocketFuel = value;
-        get => m_rocketFuel;
+        set => m_legacy_rocketFuel = value;
+        get => m_legacy_rocketFuel;
     }
     float MaxRocketFuel
     {
-        set => m_maxRocketFuel = value;
-        get => m_maxRocketFuel;
+        set => m_legacy_maxRocketFuel = value;
+        get => m_legacy_maxRocketFuel;
     }
 
     float Throttle
     {
         set
         {
-            m_throttle = value;
+            m_legacy_throttle = value;
         }
-        get => m_throttle;
+        get => m_legacy_throttle;
     }
 
     float Brake
     {
         set
         {
-            m_brake = value;
+            m_legacy_brake = value;
         }
-        get => m_brake;
+        get => m_legacy_brake;
     }
 
     float Steering
     {
         set
         {
-            m_steering = value;
+            m_legacy_steering = value;
         }
-        get => m_steering;
+        get => m_legacy_steering;
     }
 
     void Start()
     {
-        m_rigidBody = GetComponent<Rigidbody>();
-        m_rigidBody.centerOfMass = -Vector3.up * 0.3f;
+        m_legacy_rigidBody = GetComponent<Rigidbody>();
+        m_legacy_rigidBody.centerOfMass = -Vector3.up * 0.3f;
         RocketFuel = MaxRocketFuel;
         playerApi = Networking.LocalPlayer;
     }
@@ -115,9 +116,9 @@ public class CarController : UdonSharpBehaviour
     public override void Interact()
     {
         SetOwner();
-        m_owner = Networking.LocalPlayer.displayName;
-        m_cameraController.SetCar(gameObject.transform);
-        m_cameraController.Enable();
+        m_legacy_owner = Networking.LocalPlayer.displayName;
+        m_legacy_cameraController.SetCar(gameObject.transform);
+        m_legacy_cameraController.Enable();
         Networking.LocalPlayer.TeleportTo(Vector3.up * 1000f, Quaternion.identity);
         RequestSerialization();
     }
@@ -136,9 +137,9 @@ public class CarController : UdonSharpBehaviour
         {
             return; // not them
         }
-        m_owner = null;
-        m_cameraController.Disable();
-        m_cameraController.UnsetCar();
+        m_legacy_owner = null;
+        m_legacy_cameraController.Disable();
+        m_legacy_cameraController.UnsetCar();
     }
 
     public override void OnPlayerLeft(VRCPlayerApi player)
@@ -151,7 +152,7 @@ public class CarController : UdonSharpBehaviour
         {
             return;
         }
-        m_owner = null;
+        m_legacy_owner = null;
         RequestSerialization();
     }
 
@@ -163,7 +164,7 @@ public class CarController : UdonSharpBehaviour
         }
         if (value)
         {
-            m_rigidBody.AddForce(Vector3.up * m_jumpAmount, ForceMode.Acceleration);
+            m_legacy_rigidBody.AddForce(Vector3.up * m_legacy_jumpAmount, ForceMode.Acceleration);
         }
     }
 
@@ -205,14 +206,14 @@ public class CarController : UdonSharpBehaviour
     public override void InputLookHorizontal(float value, UdonInputEventArgs args)
     {
         var multiplier = 5.0f;
-        m_rigidBody.AddTorque(Vector3.up * value * multiplier, ForceMode.Acceleration);
+        m_legacy_rigidBody.AddTorque(Vector3.up * value * multiplier, ForceMode.Acceleration);
     }
 
     public override void InputLookVertical(float value, UdonInputEventArgs args)
     {
         var multiplier = 5.0f;
-        var right = Vector3.Cross(m_rigidBody.transform.forward, Vector3.up);
-        m_rigidBody.AddTorque(Vector3.right * value * multiplier, ForceMode.Acceleration);
+        var right = Vector3.Cross(m_legacy_rigidBody.transform.forward, Vector3.up);
+        m_legacy_rigidBody.AddTorque(Vector3.right * value * multiplier, ForceMode.Acceleration);
     }
 
     public override void InputGrab(bool value, UdonInputEventArgs args)
@@ -247,33 +248,33 @@ public class CarController : UdonSharpBehaviour
             return;
         }
         RocketFuel -= 0.05f;
-        m_rigidBody.AddForce(RocketBoost * m_rocketBoostAmount * transform.forward, ForceMode.Acceleration);
+        m_legacy_rigidBody.AddForce(RocketBoost * m_legacy_rocketBoostAmount * transform.forward, ForceMode.Acceleration);
     }
 
     private void applySteering()
     {
         var responsiveness = 5.0f;
-        float max = m_maxSteeringAngle * (1 - Mathf.Min(m_rigidBody.velocity.magnitude / 50, 0.9f));
-        var value = Mathf.Lerp(m_wheelColliderFL.steerAngle, Steering * max, Time.fixedDeltaTime * responsiveness);
-        m_wheelColliderFL.steerAngle = value;
-        m_wheelColliderFR.steerAngle = value;
+        float max = m_legacy_maxSteeringAngle * (1 - Mathf.Min(m_legacy_rigidBody.velocity.magnitude / 50, 0.9f));
+        var value = Mathf.Lerp(m_legacy_wheelColliderFL.steerAngle, Steering * max, Time.fixedDeltaTime * responsiveness);
+        m_legacy_wheelColliderFL.steerAngle = value;
+        m_legacy_wheelColliderFR.steerAngle = value;
     }
 
     private void applyThrottle()
     {
-        var newTorque = Throttle * m_engineTorque;
-        m_wheelColliderFL.motorTorque = newTorque;
-        m_wheelColliderFR.motorTorque = newTorque;
-        m_wheelColliderBL.motorTorque = newTorque;
-        m_wheelColliderBR.motorTorque = newTorque;
+        var newTorque = Throttle * m_legacy_engineTorque;
+        m_legacy_wheelColliderFL.motorTorque = newTorque;
+        m_legacy_wheelColliderFR.motorTorque = newTorque;
+        m_legacy_wheelColliderBL.motorTorque = newTorque;
+        m_legacy_wheelColliderBR.motorTorque = newTorque;
     }
     private void applyBrake()
     {
-        var newTorque = Brake * m_brakeTorque;
-        m_wheelColliderFL.brakeTorque = newTorque;
-        m_wheelColliderFR.brakeTorque = newTorque;
-        m_wheelColliderBL.brakeTorque = newTorque;
-        m_wheelColliderBR.brakeTorque = newTorque;
+        var newTorque = Brake * m_legacy_brakeTorque;
+        m_legacy_wheelColliderFL.brakeTorque = newTorque;
+        m_legacy_wheelColliderFR.brakeTorque = newTorque;
+        m_legacy_wheelColliderBL.brakeTorque = newTorque;
+        m_legacy_wheelColliderBR.brakeTorque = newTorque;
     }
 
 
@@ -301,10 +302,10 @@ public class CarController : UdonSharpBehaviour
 
     private void updateWheelRotations()
     {
-        wheeColliderUpdateRotation(m_wheelColliderFL, m_wheelFL, true);
-        wheeColliderUpdateRotation(m_wheelColliderFR, m_wheelFR, false);
-        wheeColliderUpdateRotation(m_wheelColliderBL, m_wheelBL, true);
-        wheeColliderUpdateRotation(m_wheelColliderBR, m_wheelBR, false);
+        wheeColliderUpdateRotation(m_legacy_wheelColliderFL, m_legacy_wheelFL, true);
+        wheeColliderUpdateRotation(m_legacy_wheelColliderFR, m_legacy_wheelFR, false);
+        wheeColliderUpdateRotation(m_legacy_wheelColliderBL, m_legacy_wheelBL, true);
+        wheeColliderUpdateRotation(m_legacy_wheelColliderBR, m_legacy_wheelBR, false);
     }
 
     private void updateThrottle()
@@ -363,7 +364,7 @@ public class CarController : UdonSharpBehaviour
         {
             playerApi = Networking.LocalPlayer;
         }
-        return m_owner == playerApi.displayName;
+        return m_legacy_owner == playerApi.displayName;
     }
 
     void SetOwner()
