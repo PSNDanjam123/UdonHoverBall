@@ -34,7 +34,14 @@ public class CarController : UdonSharpBehaviour
         }
         get => m_mass;
     }
+    [SerializeField] AnimationCurve m_enginePower;
+    [SerializeField] float m_engineMinRPM = 1000.0f;
     [SerializeField, Range(0, 100)] float m_maxSteeringAngle = 45f;
+    [SerializeField] float m_jumpForce = 100f;
+    [Header("Engine")]
+    [SerializeField, Range(0, 1)] float m_throttle = 0.0f;
+    [SerializeField] float m_engineRPM = 0.0f;
+    [SerializeField] float m_engineTorque = 0.0f;
 
     [Header("Inputs")]
     [SerializeField, Range(0, 1)] float m_inputLeftTrigger = 0.0f; public float inputLeftTrigger
@@ -57,6 +64,26 @@ public class CarController : UdonSharpBehaviour
         private set => m_inputRightThumbstickHorizontal = value;
         get => m_inputRightThumbstickHorizontal;
     }
+    [SerializeField, Range(-1, 1)] float m_inputLeftThumbstickVertical = 0.0f; public float inputLeftThumbstickVertical
+    {
+        private set => m_inputLeftThumbstickVertical = value;
+        get => m_inputLeftThumbstickVertical;
+    }
+    [SerializeField, Range(-1, 1)] float m_inputRightThumbstickVertical = 0.0f; public float inputRightThumbstickVertical
+    {
+        private set => m_inputRightThumbstickVertical = value;
+        get => m_inputRightThumbstickVertical;
+    }
+    [SerializeField] bool m_inputLeftButton = false; public bool inputLeftButton
+    {
+        private set => m_inputLeftButton = value;
+        get => m_inputLeftButton;
+    }
+    [SerializeField] bool m_inputRightButton = false; public bool inputRightButton
+    {
+        private set => m_inputRightButton = value;
+        get => m_inputRightButton;
+    }
 
     void Start()
     {
@@ -78,18 +105,44 @@ public class CarController : UdonSharpBehaviour
         applyThrottle();
         applyBrake();
         applySteering();
-        updateWheelMeshes();
+        applyJump();
+        animateWheels();
+        calculateEnginePower();
+    }
+
+    private void applyJump()
+    {
+        var jump = inputRightButton;
+        if (!jump)
+        {
+            return;
+        }
+        m_rigidBody.AddForce(Vector3.up * m_jumpForce, ForceMode.Acceleration);
     }
 
     private void applyThrottle()
     {
-        var throttle = inputRightTrigger;
+        m_throttle = inputRightTrigger;
+    }
 
-        var backL = m_wheelColliders[2];
-        var backR = m_wheelColliders[3];
+    private void calculateEnginePower()
+    {
+        m_engineRPM = Mathf.Lerp(m_engineRPM, m_engineMinRPM + Mathf.Abs(wheelRPM()), Time.fixedDeltaTime);
+        m_engineTorque = m_enginePower.Evaluate(m_engineRPM) * m_throttle;
+        foreach (var collider in m_wheelColliders)
+        {
+            collider.motorTorque = m_engineTorque / m_wheelColliders.Length;
+        }
+    }
 
-        backL.motorTorque = throttle * 100;
-        backR.motorTorque = throttle * 100;
+    private float wheelRPM()
+    {
+        float sum = 0;
+        foreach (var collider in m_wheelColliders)
+        {
+            sum += collider.rpm;
+        }
+        return sum / m_wheelColliders.Length;
     }
 
     private void applyBrake()
@@ -136,11 +189,16 @@ public class CarController : UdonSharpBehaviour
         // Thumbstick
         inputLeftThumbstickHorizontal = Input.GetAxis(left + "ThumbstickHorizontal");
         inputRightThumbstickHorizontal = Input.GetAxis(right + "ThumbstickHorizontal");
+
+        // Buttons
+        inputLeftButton = Input.GetButton(prefix + "Button2");
+        inputRightButton = Input.GetButton(prefix + "Button4");
     }
 
     private void getKMInputs()
     {
-        var responsiveness = 4.0f;
+        var responsiveness = 10.0f;
+        var mouseScaling = 10.0f;
 
         // Trigger
         inputLeftTrigger = handleKMInputLerp(KeyCode.S, 1.0f, 0.0f, inputLeftTrigger, responsiveness);
@@ -149,6 +207,11 @@ public class CarController : UdonSharpBehaviour
         // Thumbstick
         var left = Input.GetKey(KeyCode.A);
         inputLeftThumbstickHorizontal = handleKMInputLerp(left ? KeyCode.A : KeyCode.D, left ? -1.0f : 1.0f, 0.0f, inputLeftThumbstickHorizontal, responsiveness);
+        inputRightThumbstickHorizontal = Mathf.Lerp(Mathf.Clamp(Input.GetAxis("Mouse X") / mouseScaling, -1.0f, 1.0f), inputRightThumbstickHorizontal, Time.fixedDeltaTime * responsiveness);
+        inputRightThumbstickVertical = Mathf.Lerp(Mathf.Clamp(Input.GetAxis("Mouse Y") / mouseScaling, -1.0f, 1.0f), inputRightThumbstickVertical, Time.fixedDeltaTime * responsiveness);
+
+        // Buttons
+        inputRightButton = Input.GetKey(KeyCode.Space);
     }
 
     private float handleKMInputLerp(KeyCode keyCode, float input, float nonInput, float current, float responsiveness = 1.0f)
@@ -165,7 +228,7 @@ public class CarController : UdonSharpBehaviour
         mass = m_mass;
     }
 
-    private void updateWheelMeshes()
+    private void animateWheels()
     {
         for (var i = 0; i < m_wheelColliders.Length; i++)
         {
