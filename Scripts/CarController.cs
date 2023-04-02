@@ -108,6 +108,25 @@ public class CarController : UdonSharpBehaviour
         applyJump();
         animateWheels();
         calculateEnginePower();
+        calculateDownForce();
+        applyInertialDampening();
+        applyForceRotations();
+    }
+
+    private void applyForceRotations()
+    {
+        if (IsGrounded())
+        {
+            return;
+        }
+        m_rigidBody.AddTorque(Vector3.up * 100 * inputRightThumbstickHorizontal, ForceMode.Acceleration);
+        m_rigidBody.AddTorque(m_rigidBody.transform.right * 100 * inputRightThumbstickVertical, ForceMode.Acceleration);
+        m_rigidBody.AddTorque(m_rigidBody.transform.forward * 10 * -inputLeftThumbstickHorizontal, ForceMode.Acceleration);
+    }
+
+    private void applyInertialDampening()
+    {
+        m_rigidBody.AddTorque(-m_rigidBody.angularVelocity * 0.7f, ForceMode.Acceleration);
     }
 
     private void applyJump()
@@ -118,6 +137,7 @@ public class CarController : UdonSharpBehaviour
             return;
         }
         m_rigidBody.AddForce(Vector3.up * m_jumpForce, ForceMode.Acceleration);
+        m_rigidBody.angularVelocity -= m_rigidBody.angularVelocity * 0.7f;
     }
 
     private void applyThrottle()
@@ -133,6 +153,14 @@ public class CarController : UdonSharpBehaviour
         {
             collider.motorTorque = m_engineTorque / m_wheelColliders.Length;
         }
+    }
+
+    private void calculateDownForce()
+    {
+        // write better code here
+        var magnitude = m_rigidBody.velocity.magnitude;
+        var force = magnitude * -Vector3.up;
+        m_rigidBody.AddForce(force, ForceMode.Acceleration);
     }
 
     private float wheelRPM()
@@ -151,7 +179,7 @@ public class CarController : UdonSharpBehaviour
 
         foreach (var collider in m_wheelColliders)
         {
-            collider.brakeTorque = brake * 100;
+            collider.brakeTorque = brake;
         }
     }
 
@@ -160,8 +188,10 @@ public class CarController : UdonSharpBehaviour
         var frontL = m_wheelColliders[0];
         var frontR = m_wheelColliders[1];
 
-        frontL.steerAngle = inputLeftThumbstickHorizontal * m_maxSteeringAngle;
-        frontR.steerAngle = inputLeftThumbstickHorizontal * m_maxSteeringAngle;
+        var maxSteeringAngle = m_maxSteeringAngle * (1 - Mathf.Clamp(m_rigidBody.velocity.magnitude / 50f, 0.1f, 1.0f));
+
+        frontL.steerAngle = inputLeftThumbstickHorizontal * maxSteeringAngle;
+        frontR.steerAngle = inputLeftThumbstickHorizontal * maxSteeringAngle;
     }
     private void getInputs()
     {
@@ -294,6 +324,23 @@ public class CarController : UdonSharpBehaviour
             playerApi = m_playerApi;
         }
         return m_driver == playerApi.displayName;
+    }
+
+    bool IsGrounded()
+    {
+        var count = 0;
+        foreach (var collider in m_wheelColliders)
+        {
+            if (!collider.isGrounded)
+            {
+                count++;
+            }
+            if (count >= 2)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool IsOwner(VRCPlayerApi playerApi = null)
