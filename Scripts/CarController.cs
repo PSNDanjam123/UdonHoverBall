@@ -19,8 +19,18 @@ public class CarController : UdonSharpBehaviour
     [SerializeField] CameraController m_camera;
     [SerializeField] WheelCollider[] m_wheelColliders;
     [SerializeField] Transform[] m_wheelMeshes;
+    [SerializeField] MeshRenderer m_body;
+    [SerializeField] MeshRenderer m_trim;
+    [SerializeField] Light m_neon;
+
+    Material m_bodyMaterial;
+
+    Material m_trimMaterial;
 
     [Header("Settings")]
+    [SerializeField] byte m_team = 1;
+    [SerializeField] Color m_team1Color = Color.blue;
+    [SerializeField] Color m_team2Color = Color.red;
 
     [SerializeField, Range(0, 100000)] float m_mass = 1000; public float mass
     {
@@ -90,6 +100,14 @@ public class CarController : UdonSharpBehaviour
         m_playerApi = Networking.LocalPlayer;
         m_rigidBody = GetComponent<Rigidbody>();
         m_rigidBody.useGravity = true;
+
+        m_bodyMaterial = m_body.material;
+        m_trimMaterial = m_trim.material;
+
+        m_bodyMaterial.SetColor("_Color", m_team == 1 ? m_team1Color : m_team2Color);
+        m_trimMaterial.SetColor("_EmissionColor", m_team == 1 ? m_team1Color : m_team2Color);
+        m_neon.color = m_team == 1 ? m_team1Color : m_team2Color;
+
         initSettings();
     }
 

@@ -292,6 +292,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
+      propertyPath: m_team
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
       propertyPath: m_camera
       value: 
       objectReference: {fileID: 7219550623174116941}
@@ -718,6 +723,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_team
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
@@ -2248,6 +2258,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_team
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
