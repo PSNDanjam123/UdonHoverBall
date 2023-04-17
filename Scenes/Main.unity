@@ -768,6 +768,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 946e9f74ce8ccfe448ddcba3d766f3c5,
         type: 2}
+    - target: {fileID: 1547759645694531932, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2137823154467941396, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_Type
@@ -788,6 +793,17 @@ PrefabInstance:
       propertyPath: m_Shadows.m_Type
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3330897921361825181, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3497476289345460848, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 3497476289345460848, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
     - target: {fileID: 4036762017542671957, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -966,6 +982,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car
       objectReference: {fileID: 0}
+    - target: {fileID: 7372657665829403788, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7372657665829403788, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
     - target: {fileID: 8952915075795301765, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

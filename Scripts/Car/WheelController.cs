@@ -33,6 +33,11 @@ namespace UdonHoverBall.Car
         [SerializeField] Transform m_meshBR;
         [SerializeField] Transform m_meshBL;
 
+        [Header("Info")]
+        [SerializeField] bool m_isGrounded = true; public bool IsGrounded
+        {
+            get => m_colliderFR.isGrounded || m_colliderFL.isGrounded || m_colliderBR.isGrounded || m_colliderBL.isGrounded;
+        }
         void FixedUpdate()
         {
             AnimateWheels();
