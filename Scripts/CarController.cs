@@ -47,6 +47,7 @@ public class CarController : UdonSharpBehaviour
         }
         get => m_mass;
     }
+    [SerializeField] Transform m_centerOfMass;
     [SerializeField] float m_jumpForce = 100f;
 
     void Start()
@@ -54,6 +55,7 @@ public class CarController : UdonSharpBehaviour
         m_playerApi = Networking.LocalPlayer;
         m_rigidBody = GetComponent<Rigidbody>();
         m_rigidBody.useGravity = true;
+        m_rigidBody.centerOfMass = m_centerOfMass.localPosition;
 
         m_bodyMaterial = m_body.material;
         m_trimMaterial = m_trim.material;
@@ -92,7 +94,7 @@ public class CarController : UdonSharpBehaviour
         }
         m_rigidBody.AddTorque(Vector3.up * 100 * m_inputController.RightThumbstickHorizontal, ForceMode.Acceleration);
         m_rigidBody.AddTorque(m_rigidBody.transform.right * 100 * m_inputController.RightThumbstickVertical, ForceMode.Acceleration);
-        m_rigidBody.AddTorque(m_rigidBody.transform.forward * 10 * -m_inputController.LeftThumbstickHorizontal, ForceMode.Acceleration);
+        //m_rigidBody.AddTorque(m_rigidBody.transform.forward * 10 * -m_inputController.LeftThumbstickHorizontal, ForceMode.Acceleration);
     }
 
     private void applyInertialDampening()
@@ -122,9 +124,9 @@ public class CarController : UdonSharpBehaviour
     private void calculateDownForce()
     {
         // write better code here
-        var magnitude = m_rigidBody.velocity.magnitude;
-        var force = magnitude * -Vector3.up;
-        m_rigidBody.AddForce(force, ForceMode.Acceleration);
+        var lift = 25.0f * Vector3.Project(m_rigidBody.velocity, m_rigidBody.transform.forward).sqrMagnitude;
+        var force = lift * -transform.up;
+        m_rigidBody.AddForceAtPosition(force, transform.position);
     }
 
     private void applySteering()
