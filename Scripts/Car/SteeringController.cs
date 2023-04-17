@@ -48,6 +48,7 @@ namespace UdonHoverBall.Car
             {
                 return;
             }
+
             m_previousAngle = m_currentAngle;
             m_colliderFL.steerAngle = m_currentAngle;
             m_colliderFR.steerAngle = m_currentAngle;

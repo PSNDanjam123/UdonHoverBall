@@ -57,8 +57,8 @@ namespace UdonHoverBall.Car
 
         void ApplyWheelTorque()
         {
-            m_wheelController.ColliderBL.motorTorque = m_currentTorque / 2;
-            m_wheelController.ColliderBR.motorTorque = m_currentTorque / 2;
+            m_wheelController.ColliderBL.motorTorque = (m_currentTorque * 5) / 2;
+            m_wheelController.ColliderBR.motorTorque = (m_currentTorque * 5) / 2;
         }
     }
 

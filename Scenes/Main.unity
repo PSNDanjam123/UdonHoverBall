@@ -5144,6 +5144,11 @@ PrefabInstance:
       propertyPath: _syncMethod
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1759074901017559150, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_Drag
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 2137823154467941396, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_Type
@@ -5166,6 +5171,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3330897921361825181, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3330897921361825181, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
       propertyPath: _syncMethod
       value: 1
       objectReference: {fileID: 0}
@@ -5175,16 +5185,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3497476289345460848, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
-    - target: {fileID: 3752281489172352819, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_ExtremumValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3752281489172352819, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_AsymptoteValue
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 4036762017542671957, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -5208,57 +5208,52 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
-      propertyPath: m_powerCurve.m_Curve.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[1].time
-      value: 2003.5116
+      value: 313.65244
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[2].time
-      value: 2488.1697
+      value: 1960.7947
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_powerCurve.m_Curve.Array.data[3].time
+      value: 2459.692
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[1].value
-      value: 2040.6742
+      value: 1012.03125
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[2].value
-      value: 1897.8687
+      value: 1500.8524
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_powerCurve.m_Curve.Array.data[3].value
+      value: 1335.3654
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[1].inSlope
-      value: 0
+      value: 0.71441907
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[2].inSlope
-      value: -0.58057046
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_powerCurve.m_Curve.Array.data[1].outSlope
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
-      propertyPath: m_powerCurve.m_Curve.Array.data[2].inWeight
-      value: 0.36248976
+      propertyPath: m_powerCurve.m_Curve.Array.data[1].outSlope
+      value: 0.71441907
       objectReference: {fileID: 0}
     - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_powerCurve.m_Curve.Array.data[2].outSlope
-      value: -0.58057046
-      objectReference: {fileID: 0}
-    - target: {fileID: 4663805583579569335, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_powerCurve.m_Curve.Array.data[2].tangentMode
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5106334893870426861, guid: 740d3f82f5de26445b4122217d21ca10,
@@ -5271,26 +5266,6 @@ PrefabInstance:
         type: 3}
       propertyPath: _syncMethod
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5251374666136502411, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_ExtremumValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5251374666136502411, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_AsymptoteValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6104634145952298418, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_ExtremumValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6104634145952298418, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_AsymptoteValue
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
@@ -5373,16 +5348,6 @@ PrefabInstance:
       propertyPath: m_enginePower.m_Curve.Array.data[1].outWeight
       value: 0.854864
       objectReference: {fileID: 0}
-    - target: {fileID: 6875749209302922816, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_ExtremumValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6875749209302922816, guid: 740d3f82f5de26445b4122217d21ca10,
-        type: 3}
-      propertyPath: m_ForwardFriction.m_AsymptoteValue
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 7081252100970154951, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_Name
@@ -5461,8 +5426,8 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 7372657665829403788, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
-      propertyPath: m_brakeForce
-      value: 5
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7372657665829403788, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
