@@ -61,7 +61,6 @@ public class CarController : UdonSharpBehaviour
         m_bodyMaterial.SetColor("_Color", m_team == 1 ? m_team1Color : m_team2Color);
         m_trimMaterial.SetColor("_EmissionColor", m_team == 1 ? m_team1Color : m_team2Color);
         m_neon.color = m_team == 1 ? m_team1Color : m_team2Color;
-
         initSettings();
     }
 
@@ -83,6 +82,10 @@ public class CarController : UdonSharpBehaviour
 
     private void applyForceRotations()
     {
+        if (!IsDriver())
+        {
+            return;
+        }
         if (m_wheelController.IsGrounded)
         {
             return;
@@ -94,11 +97,19 @@ public class CarController : UdonSharpBehaviour
 
     private void applyInertialDampening()
     {
+        if (!IsDriver())
+        {
+            return;
+        }
         m_rigidBody.AddTorque(-m_rigidBody.angularVelocity * 0.7f, ForceMode.Acceleration);
     }
 
     private void applyJump()
     {
+        if (!IsDriver())
+        {
+            return;
+        }
         var jump = m_inputController.RightButton;
         if (!jump)
         {
@@ -106,17 +117,6 @@ public class CarController : UdonSharpBehaviour
         }
         m_rigidBody.AddForce(Vector3.up * m_jumpForce, ForceMode.Acceleration);
         m_rigidBody.angularVelocity -= m_rigidBody.angularVelocity * 0.7f;
-    }
-
-    private WheelCollider[] getWheelColliders()
-    {
-        WheelCollider[] colliders = {
-            m_wheelController.ColliderFL,
-            m_wheelController.ColliderFR,
-            m_wheelController.ColliderBL,
-            m_wheelController.ColliderBR,
-        };
-        return colliders;
     }
 
     private void calculateDownForce()
@@ -172,19 +172,27 @@ public class CarController : UdonSharpBehaviour
     void Enter()
     {
         SetOwner();
+
         m_driver = Networking.LocalPlayer.displayName;
         m_camera.SetCar(gameObject.transform);
         m_camera.Enable();
         Networking.LocalPlayer.TeleportTo(Vector3.up * 1000f, Quaternion.identity);
+
+        ToggleControllers(true);
+
         RequestSerialization();
     }
 
     void Exit()
     {
         SetOwner();
+
         m_camera.Disable();
         m_camera.SetCar(null);
         m_driver = "";
+
+        ToggleControllers(false);
+
         RequestSerialization();
     }
 
@@ -213,5 +221,13 @@ public class CarController : UdonSharpBehaviour
             playerApi = m_playerApi;
         }
         Networking.SetOwner(playerApi, gameObject);
+    }
+
+    void ToggleControllers(bool enabled)
+    {
+        m_inputController.enabled = enabled;
+        m_engineController.enabled = enabled;
+        m_brakeController.enabled = enabled;
+        m_wheelController.enabled = enabled;
     }
 }
