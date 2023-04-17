@@ -762,6 +762,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 291173070065364491, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 390099747801251409, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: serializedProgramAsset
@@ -804,6 +809,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3497476289345460848, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
+    - target: {fileID: 3752281489172352819, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_ExtremumValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3752281489172352819, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_AsymptoteValue
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4036762017542671957, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -835,6 +850,26 @@ PrefabInstance:
         type: 3}
       propertyPath: _syncMethod
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5251374666136502411, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_ExtremumValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5251374666136502411, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_AsymptoteValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104634145952298418, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_ExtremumValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104634145952298418, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_AsymptoteValue
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6856077338381102963, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
@@ -917,6 +952,16 @@ PrefabInstance:
       propertyPath: m_enginePower.m_Curve.Array.data[1].outWeight
       value: 0.854864
       objectReference: {fileID: 0}
+    - target: {fileID: 6875749209302922816, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_ExtremumValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6875749209302922816, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_ForwardFriction.m_AsymptoteValue
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7081252100970154951, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: m_Name
@@ -982,6 +1027,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car
       objectReference: {fileID: 0}
+    - target: {fileID: 7318856471465452132, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: m_maxAngle
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7318856471465452132, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7318856471465452132, guid: 740d3f82f5de26445b4122217d21ca10,
+        type: 3}
     - target: {fileID: 7372657665829403788, guid: 740d3f82f5de26445b4122217d21ca10,
         type: 3}
       propertyPath: serializationData.Prefab

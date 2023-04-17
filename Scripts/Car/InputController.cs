@@ -96,7 +96,7 @@ namespace UdonHoverBall.Car
             var mouseScaling = 10.0f;
 
             // Trigger
-            LeftTrigger = HandleKMInputLerp(KeyCode.S, 1.0f, 0.0f, LeftTrigger, responsiveness);
+            LeftTrigger = Input.GetKey(KeyCode.S) ? 1.0f : 0.0f;
             RightTrigger = HandleKMInputLerp(KeyCode.W, 1.0f, 0.0f, RightTrigger, responsiveness);
 
             // Thumbstick

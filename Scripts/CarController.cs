@@ -21,6 +21,7 @@ public class CarController : UdonSharpBehaviour
     [SerializeField] UdonHoverBall.Car.WheelController m_wheelController;
     [SerializeField] UdonHoverBall.Car.EngineController m_engineController;
     [SerializeField] UdonHoverBall.Car.BrakeController m_brakeController;
+    [SerializeField] UdonHoverBall.Car.SteeringController m_steeringController;
     [SerializeField] MeshRenderer m_body;
     [SerializeField] MeshRenderer m_trim;
     [SerializeField] Light m_neon;
@@ -46,7 +47,6 @@ public class CarController : UdonSharpBehaviour
         }
         get => m_mass;
     }
-    [SerializeField, Range(0, 100)] float m_maxSteeringAngle = 45f;
     [SerializeField] float m_jumpForce = 100f;
 
     void Start()
@@ -129,13 +129,8 @@ public class CarController : UdonSharpBehaviour
 
     private void applySteering()
     {
-        var frontL = m_wheelController.ColliderFL;
-        var frontR = m_wheelController.ColliderFR;
-
-        var maxSteeringAngle = m_maxSteeringAngle * (1 - Mathf.Clamp(m_rigidBody.velocity.magnitude / 50f, 0.1f, 1.0f));
-
-        frontL.steerAngle = m_inputController.LeftThumbstickHorizontal * maxSteeringAngle;
-        frontR.steerAngle = m_inputController.LeftThumbstickHorizontal * maxSteeringAngle;
+        var multipler = m_steeringController.MaxAngle * (1 - Mathf.Clamp(m_rigidBody.velocity.magnitude / 50f, 0.7f, 1.0f));
+        m_steeringController.CurrentAngle = m_inputController.LeftThumbstickHorizontal * multipler;
     }
 
     private void initSettings()

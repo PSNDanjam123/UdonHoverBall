@@ -10,7 +10,7 @@ namespace UdonHoverBall.Car
     public class BrakeController : UdonSharpBehaviour
     {
         [Header("Settings")]
-        [SerializeField] float m_brakeForce = 100.0f;
+        [SerializeField] float m_brakeForce = 20.0f;
         [Header("Scripts")]
         [SerializeField] WheelController m_wheelController;
 
@@ -21,6 +21,13 @@ namespace UdonHoverBall.Car
             get => m_brakePosition;
         }
 
+        float m_previousBrakePosition = 0.0f;
+
+        void Start()
+        {
+            m_previousBrakePosition = m_brakePosition;
+        }
+
         void FixedUpdate()
         {
             ApplyBrakes();
@@ -28,6 +35,11 @@ namespace UdonHoverBall.Car
 
         void ApplyBrakes()
         {
+            if (m_brakePosition == m_previousBrakePosition)
+            {
+                return;
+            }
+            m_previousBrakePosition = m_brakePosition;
             var amount = m_brakePosition * m_brakeForce;
             m_wheelController.ColliderFL.brakeTorque = amount;
             m_wheelController.ColliderFR.brakeTorque = amount;

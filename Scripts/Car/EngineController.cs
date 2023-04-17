@@ -45,9 +45,7 @@ namespace UdonHoverBall.Car
             // wheel RPM
             var rpm = m_wheelController.ColliderFL.rpm;
             rpm += m_wheelController.ColliderFR.rpm;
-            rpm += m_wheelController.ColliderBL.rpm;
-            rpm += m_wheelController.ColliderBR.rpm;
-            rpm /= 4;
+            rpm /= 2;
 
             m_currentRPM = Mathf.Lerp(m_currentRPM, m_minRPM + Mathf.Abs(rpm), Time.fixedDeltaTime);
         }
@@ -59,10 +57,8 @@ namespace UdonHoverBall.Car
 
         void ApplyWheelTorque()
         {
-            m_wheelController.ColliderFL.motorTorque = m_currentTorque / 4;
-            m_wheelController.ColliderFR.motorTorque = m_currentTorque / 4;
-            m_wheelController.ColliderBL.motorTorque = m_currentTorque / 4;
-            m_wheelController.ColliderBR.motorTorque = m_currentTorque / 4;
+            m_wheelController.ColliderBL.motorTorque = m_currentTorque / 2;
+            m_wheelController.ColliderBR.motorTorque = m_currentTorque / 2;
         }
     }
 
