@@ -17,8 +17,8 @@ public class CarController : UdonSharpBehaviour
 
     [Header("Components")]
     [SerializeField] CameraController m_camera;
-    [SerializeField] WheelCollider[] m_wheelColliders;
-    [SerializeField] Transform[] m_wheelMeshes;
+    [SerializeField] UdonHoverBall.Car.WheelController m_wheelController;
+    [SerializeField] UdonHoverBall.Car.EngineController m_engineController;
     [SerializeField] MeshRenderer m_body;
     [SerializeField] MeshRenderer m_trim;
     [SerializeField] Light m_neon;
@@ -44,14 +44,8 @@ public class CarController : UdonSharpBehaviour
         }
         get => m_mass;
     }
-    [SerializeField] AnimationCurve m_enginePower;
-    [SerializeField] float m_engineMinRPM = 1000.0f;
     [SerializeField, Range(0, 100)] float m_maxSteeringAngle = 45f;
     [SerializeField] float m_jumpForce = 100f;
-    [Header("Engine")]
-    [SerializeField, Range(0, 1)] float m_throttle = 0.0f;
-    [SerializeField] float m_engineRPM = 0.0f;
-    [SerializeField] float m_engineTorque = 0.0f;
 
     [Header("Inputs")]
     [SerializeField, Range(0, 1)] float m_inputLeftTrigger = 0.0f; public float inputLeftTrigger
@@ -124,8 +118,6 @@ public class CarController : UdonSharpBehaviour
         applyBrake();
         applySteering();
         applyJump();
-        animateWheels();
-        calculateEnginePower();
         calculateDownForce();
         applyInertialDampening();
         applyForceRotations();
@@ -160,17 +152,18 @@ public class CarController : UdonSharpBehaviour
 
     private void applyThrottle()
     {
-        m_throttle = inputRightTrigger;
+        m_engineController.ThrottlePosition = inputRightTrigger;
     }
 
-    private void calculateEnginePower()
+    private WheelCollider[] getWheelColliders()
     {
-        m_engineRPM = Mathf.Lerp(m_engineRPM, m_engineMinRPM + Mathf.Abs(wheelRPM()), Time.fixedDeltaTime);
-        m_engineTorque = m_enginePower.Evaluate(m_engineRPM) * m_throttle;
-        foreach (var collider in m_wheelColliders)
-        {
-            collider.motorTorque = m_engineTorque / m_wheelColliders.Length;
-        }
+        WheelCollider[] colliders = {
+            m_wheelController.ColliderFL,
+            m_wheelController.ColliderFR,
+            m_wheelController.ColliderBL,
+            m_wheelController.ColliderBR,
+        };
+        return colliders;
     }
 
     private void calculateDownForce()
@@ -181,21 +174,12 @@ public class CarController : UdonSharpBehaviour
         m_rigidBody.AddForce(force, ForceMode.Acceleration);
     }
 
-    private float wheelRPM()
-    {
-        float sum = 0;
-        foreach (var collider in m_wheelColliders)
-        {
-            sum += collider.rpm;
-        }
-        return sum / m_wheelColliders.Length;
-    }
-
     private void applyBrake()
     {
         var brake = inputLeftTrigger;
 
-        foreach (var collider in m_wheelColliders)
+        var colliders = getWheelColliders();
+        foreach (var collider in colliders)
         {
             collider.brakeTorque = brake;
         }
@@ -203,8 +187,8 @@ public class CarController : UdonSharpBehaviour
 
     private void applySteering()
     {
-        var frontL = m_wheelColliders[0];
-        var frontR = m_wheelColliders[1];
+        var frontL = m_wheelController.ColliderFL;
+        var frontR = m_wheelController.ColliderFR;
 
         var maxSteeringAngle = m_maxSteeringAngle * (1 - Mathf.Clamp(m_rigidBody.velocity.magnitude / 50f, 0.1f, 1.0f));
 
@@ -276,20 +260,6 @@ public class CarController : UdonSharpBehaviour
         mass = m_mass;
     }
 
-    private void animateWheels()
-    {
-        for (var i = 0; i < m_wheelColliders.Length; i++)
-        {
-            var collider = m_wheelColliders[i];
-            var mesh = m_wheelMeshes[i];
-            var pos = mesh.position;
-            var rot = mesh.rotation;
-            collider.GetWorldPose(out pos, out rot);
-            mesh.transform.position = pos;
-            mesh.transform.rotation = rot;
-        }
-    }
-
     public override void Interact()
     {
         if (!IsDriver())
@@ -347,7 +317,8 @@ public class CarController : UdonSharpBehaviour
     bool IsGrounded()
     {
         var count = 0;
-        foreach (var collider in m_wheelColliders)
+        var colliders = getWheelColliders();
+        foreach (var collider in colliders)
         {
             if (!collider.isGrounded)
             {
