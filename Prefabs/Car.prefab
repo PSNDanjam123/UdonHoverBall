@@ -6098,7 +6098,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 291173070065364491}
   m_wheelController: {fileID: 5106334893870426861}
-  m_maxAngle: 70
+  m_maxAngle: 45
   m_currentAngle: 0
 --- !u!114 &291173070065364491
 MonoBehaviour:

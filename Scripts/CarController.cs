@@ -129,7 +129,7 @@ public class CarController : UdonSharpBehaviour
 
     private void applySteering()
     {
-        var multipler = m_steeringController.MaxAngle * (1 - Mathf.Clamp(m_rigidBody.velocity.magnitude / 50f, 0.7f, 1.0f));
+        var multipler = m_steeringController.MaxAngle;
         m_steeringController.CurrentAngle = m_inputController.LeftThumbstickHorizontal * multipler;
     }
 
