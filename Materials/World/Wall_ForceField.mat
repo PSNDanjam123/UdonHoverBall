@@ -104,4 +104,4 @@ Material:
     - _specularAntiAliasingVariance: 0.15
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 0.6392157}
-    - _EmissionColor: {r: 2.240558, g: 2.240558, b: 2.240558, a: 1}
+    - _EmissionColor: {r: 2.0851126, g: 2.0851126, b: 2.0851126, a: 1}
